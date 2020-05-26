@@ -2,7 +2,9 @@
 
 Two simple modules leveraging on Azure Cognitive Service using Compter Vision API. 
 
-Written in Python3. The modules are:
+Compatible with Python 3.6+ and above
+
+The modules are:
 1. OCR - Performs text recognition on images, files by calling on the "vision/v2.0/ocr"
 2. Analyze - Performs imagee analysis and returns caption and words associated to picture
 

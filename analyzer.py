@@ -7,6 +7,7 @@ import os
 import requests
 from PIL import Image
 from io import BytesIO
+from pathlib import Path
 from auth import auth_env
 import matplotlib.pyplot as plt
 
@@ -21,9 +22,9 @@ def analyzer(file_name=None, file_url=None):
     parameters = {"visualFeatures": 'Adult,Categories,Description,Objects,Tags'}
 
     if file_name:
-        file_path = '~/Desktop/' + file_name
-        file = os.path.expanduser(file_path)
-        file_data = open(file, 'rb').read()
+        cwd = Path.cwd()
+        file_path = Path(Path.joinpath(cwd.parent, file_name))
+        file_data = open(file_path, 'rb').read()
         request_header = {"Content-Type": 'application/octet-stream', "Ocp-Apim-Subscription-Key": subscription_key}
 
         # Post to API
@@ -48,14 +49,14 @@ def plotter(results, save_img=False, file_name=None, file_url=None):
     caption = results["description"]["captions"][0]["text"].capitalize()  # Access the line
 
     if file_name:
-        file_path = '~/Desktop/' + file_name
-        file = os.path.expanduser(file_path)
-        image_ = Image.open(file)
+        cwd = Path.cwd()
+        file_path = Path(Path.joinpath(cwd.parent, file_name))
+        image_ = Image.open(file_path)
 
     elif file_url:
         image_ = Image.open(BytesIO(requests.get(file_url).content))
 
-    # Display the image and overlay it with the caption.
+    # Display the image and overlay it with the caption.d
     plt.imshow(image_)
     _ = plt.title(caption, size="x-large", y=-0.1)
     plt.axis("off")
@@ -80,7 +81,7 @@ if __name__ == '__main__':
             print('\nInput error, Please re-enter your option correctly\n')
 
     if query.lower() == 'd':
-        print('\nPlease copy file to your desktop.\n')
+        print('\nPlease copy file to your parent directory.\n')
         image = input('\nPlease enter file name with extension(e.g "fireflies.jpg"): ')
         save = input('\nWould you like to save the new picture [y/n]: ').lower().startswith('y')
         results = analyzer(file_name=image)

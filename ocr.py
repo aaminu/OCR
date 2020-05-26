@@ -6,6 +6,7 @@ performs OCR and returns Text from File
 import os
 import sys
 import requests
+from pathlib import Path
 from auth import auth_env
 
 
@@ -19,9 +20,9 @@ def ocr(file_name=None, file_url=None):
     parameters = {"language": 'unk', "detectOrientation": True}
 
     if file_name:
-        file_path = '~/Desktop/' + file_name
-        file = os.path.expanduser(file_path)
-        file_data = open(file, 'rb').read()
+        cwd = Path.cwd()
+        file_path = Path(Path.joinpath(cwd.parent, file_name))
+        file_data = open(file_path, 'rb').read()
         request_header = {"Content-Type": 'application/octet-stream', "Ocp-Apim-Subscription-Key": subscription_key}
 
         # Post to API
@@ -57,6 +58,7 @@ def ocr_text_retriever(result):
             temp = lst_.pop(0)
             for item in temp['words']:
                 text.append(item.get('text'))
+            text.append('\n')
             return recurs_text(lst_)
 
     return ' '.join(recurs_text(line))
@@ -78,7 +80,7 @@ if __name__ == '__main__':
             print('\nInput error, Please re-enter your option correctly\n')
 
     if query.lower() == 'd':
-        print('\nPlease copy file to your desktop.\n')
+        print('\nPlease copy file to your parent directory, e.g. Desktop, Documents...\n')
         image = input('\nPlease enter file name with extension(e.g "fireflies.jpg"): ')
         results = ocr(file_name=image)
         print('\nThe content of your document is:\n\n', ocr_text_retriever(results))
